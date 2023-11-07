@@ -1876,7 +1876,6 @@ Resources:
     Type: "AWS::ApiGateway::Method"
     Properties:
       AuthorizationType: AWS_IAM
-      AuthorizerId: !Ref ApiRequestAuthorizer
       HttpMethod: GET
       Integration:
         Type: AWS_PROXY
