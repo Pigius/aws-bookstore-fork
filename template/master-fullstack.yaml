@@ -1398,15 +1398,15 @@ Resources:
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 06a821b7-638e-471c-ab50-51710b73767c
-  FunctionAuthorizeStepPermissions:
-    Type: "AWS::Lambda::Permission"
-    Properties:
-      Action: "lambda:InvokeFunction"
-      FunctionName: !GetAtt FunctionAuthorizeStep.Arn
-      Principal: "*"
-    Metadata:
-      "AWS::CloudFormation::Designer":
-        id: 06a821b7-638e-471c-ab50-51710b73767c
+  # FunctionAuthorizeStepPermissions:
+  #   Type: "AWS::Lambda::Permission"
+  #   Properties:
+  #     Action: "lambda:InvokeFunction"
+  #     FunctionName: !GetAtt FunctionAuthorizeStep.Arn
+  #     Principal: "*"
+  #   Metadata:
+  #     "AWS::CloudFormation::Designer":
+  #       id: 06a821b7-638e-471c-ab50-51710b73767c
   FunctionGetRecommendationsPermissions:
     Type: "AWS::Lambda::Permission"
     Properties:
