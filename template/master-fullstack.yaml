@@ -1875,7 +1875,7 @@ Resources:
     DependsOn: FunctionListOrdersPermissions
     Type: "AWS::ApiGateway::Method"
     Properties:
-      AuthorizationType: CUSTOM
+      AuthorizationType: AWS_IAM
       AuthorizerId: !Ref ApiRequestAuthorizer
       HttpMethod: GET
       Integration:
