@@ -1398,6 +1398,15 @@ Resources:
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 06a821b7-638e-471c-ab50-51710b73767c
+  FunctionAuthorizeStepPermissions:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt FunctionAuthorizeStep.Arn
+      Principal: "*"
+    Metadata:
+      "AWS::CloudFormation::Designer":
+        id: 06a821b7-638e-471c-ab50-51710b73767c
   FunctionGetRecommendationsPermissions:
     Type: "AWS::Lambda::Permission"
     Properties:
@@ -1866,7 +1875,8 @@ Resources:
     DependsOn: FunctionListOrdersPermissions
     Type: "AWS::ApiGateway::Method"
     Properties:
-      AuthorizationType: AWS_IAM
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref ApiRequestAuthorizer
       HttpMethod: GET
       Integration:
         Type: AWS_PROXY
@@ -1891,6 +1901,7 @@ Resources:
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 9007f88f-407a-4ab7-9ebb-ce6fa13b223e
+
   OrdersApiRequestPOST:
     DependsOn: FunctionCheckoutPermissions
     Type: "AWS::ApiGateway::Method"
@@ -2372,6 +2383,18 @@ Resources:
           - Arn
       RestApiId: !Ref AppApi
       Type: COGNITO_USER_POOLS
+    Metadata:
+      "AWS::CloudFormation::Designer":
+        id: 03db03b0-3367-4eb8-bfa1-82df7efc4df4
+  ApiRequestAuthorizer:
+    Type: "AWS::ApiGateway::Authorizer"
+    Properties:
+      AuthorizerResultTtlInSeconds: 0
+      IdentitySource: "method.request.header.Authorization"
+      Name: "RequestBasedAuthorizer"
+      RestApiId: !Ref AppApi
+      Type: "REQUEST"
+      AuthorizerUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionAuthorizeStep.Arn}/invocations"
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 03db03b0-3367-4eb8-bfa1-82df7efc4df4
