@@ -2382,18 +2382,18 @@ Resources:
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 03db03b0-3367-4eb8-bfa1-82df7efc4df4
-  # ApiRequestAuthorizer:
-  #   Type: "AWS::ApiGateway::Authorizer"
-  #   Properties:
-  #     AuthorizerResultTtlInSeconds: 0
-  #     IdentitySource: "method.request.header.Authorization"
-  #     Name: "RequestBasedAuthorizer"
-  #     RestApiId: !Ref AppApi
-  #     Type: "REQUEST"
-  #     AuthorizerUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionAuthorizeStep.Arn}/invocations"
-  #   Metadata:
-  #     "AWS::CloudFormation::Designer":
-  #       id: 03db03b0-3367-4eb8-bfa1-82df7efc4df4
+  ApiRequestAuthorizer:
+    Type: "AWS::ApiGateway::Authorizer"
+    Properties:
+      AuthorizerResultTtlInSeconds: 0
+      IdentitySource: "method.request.header.Authorization"
+      Name: "RequestBasedAuthorizer"
+      RestApiId: !Ref AppApi
+      Type: "REQUEST"
+      AuthorizerUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionAuthorizeStep.Arn}/invocations"
+    Metadata:
+      "AWS::CloudFormation::Designer":
+        id: 03db03b0-3367-4eb8-bfa1-82df7efc4df4
   APIDeployment:
     DependsOn:
       - BooksApiRequestGET
