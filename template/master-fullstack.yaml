@@ -1404,6 +1404,9 @@ Resources:
       Action: "lambda:InvokeFunction"
       FunctionName: !GetAtt FunctionAuthorizeStep.Arn
       Principal: "*"
+    Metadata:
+      "AWS::CloudFormation::Designer":
+        id: 06a821b7-638e-471c-ab50-51710b73767c
   FunctionGetRecommendationsPermissions:
     Type: "AWS::Lambda::Permission"
     Properties:
@@ -1872,7 +1875,8 @@ Resources:
     DependsOn: FunctionListOrdersPermissions
     Type: "AWS::ApiGateway::Method"
     Properties:
-      AuthorizationType: AWS_IAM
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref ApiRequestAuthorizer
       HttpMethod: GET
       Integration:
         Type: AWS_PROXY
@@ -2389,8 +2393,11 @@ Resources:
       IdentitySource: "method.request.header.Authorization"
       Name: "RequestBasedAuthorizer"
       RestApiId: !Ref AppApi
-      Type: REQUEST
+      Type: "REQUEST"
       AuthorizerUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionAuthorizeStep.Arn}/invocations"
+    Metadata:
+      "AWS::CloudFormation::Designer":
+        id: 03db03b0-3367-4eb8-bfa1-82df7efc4df4
   APIDeployment:
     DependsOn:
       - BooksApiRequestGET
