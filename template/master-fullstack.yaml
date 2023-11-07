@@ -987,27 +987,24 @@ Resources:
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 1ae22cac-5803-4077-a6fe-1a3ca1aedfc2
-  # FunctionAuthorizeStep:
-  #   Type: "AWS::Lambda::Function"
-  #   Properties:
-  #     FunctionName: !Sub "${ProjectName}-AuthorizeStep"
-  #     Description: Get book by id
-  #     Handler: index.handler
-  #     MemorySize: 256
-  #     Runtime: nodejs16.x
-  #     Role: !GetAtt
-  #       - DynamoDbRole
-  #       - Arn
-  #     Timeout: 120
-  #     Code:
-  #       S3Bucket: !FindInMap
-  #         - S3Buckets
-  #         - !Ref "AWS::Region"
-  #         - Bucket
-  #       S3Key: !FindInMap
-  #         - Constants
-  #         - S3Keys
-  #         - AuthorizeStepCode
+  FunctionAuthorizeStep:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: !Sub "${ProjectName}-AuthorizeStep"
+      Description: Get book by id
+      Handler: index.handler
+      MemorySize: 256
+      Runtime: nodejs16.x
+      Timeout: 120
+      Code:
+        S3Bucket: !FindInMap
+          - S3Buckets
+          - !Ref "AWS::Region"
+          - Bucket
+        S3Key: !FindInMap
+          - Constants
+          - S3Keys
+          - AuthorizeStepCode
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 1ae22cac-5803-4077-a6fe-1a3ca1aedfc2
@@ -1398,15 +1395,15 @@ Resources:
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 06a821b7-638e-471c-ab50-51710b73767c
-  # FunctionAuthorizeStepPermissions:
-  #   Type: "AWS::Lambda::Permission"
-  #   Properties:
-  #     Action: "lambda:InvokeFunction"
-  #     FunctionName: !GetAtt FunctionAuthorizeStep.Arn
-  #     Principal: "*"
-  #   Metadata:
-  #     "AWS::CloudFormation::Designer":
-  #       id: 06a821b7-638e-471c-ab50-51710b73767c
+  FunctionAuthorizeStepPermissions:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt FunctionAuthorizeStep.Arn
+      Principal: "*"
+    Metadata:
+      "AWS::CloudFormation::Designer":
+        id: 06a821b7-638e-471c-ab50-51710b73767c
   FunctionGetRecommendationsPermissions:
     Type: "AWS::Lambda::Permission"
     Properties:
