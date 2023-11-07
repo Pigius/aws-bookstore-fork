@@ -51,6 +51,8 @@ Mappings:
       PythonLambdaLayer: functions/PythonLambdaLayer.zip
       DeleteBucketsCode: functions/DeleteBuckets.zip
       SeederFunctionCode: functions/aws-serverless-codecommit-seeder.zip
+      AuthorizeStepCode: functions/AuthorizeStep.zip
+
 Resources:
   # ---------- VPC - SUBNET - SECURITY GROUPS  ---------
   MyPolicyStore:
@@ -985,6 +987,30 @@ Resources:
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 1ae22cac-5803-4077-a6fe-1a3ca1aedfc2
+  FunctionAuthorizeStep:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: !Sub "${ProjectName}-AuthorizeStep"
+      Description: Get book by id
+      Handler: index.handler
+      MemorySize: 256
+      Runtime: nodejs16.x
+      Role: !GetAtt
+        - DynamoDbRole
+        - Arn
+      Timeout: 120
+      Code:
+        S3Bucket: !FindInMap
+          - S3Buckets
+          - !Ref "AWS::Region"
+          - Bucket
+        S3Key: !FindInMap
+          - Constants
+          - S3Keys
+          - AuthorizeStepCode
+    Metadata:
+      "AWS::CloudFormation::Designer":
+        id: 1ae22cac-5803-4077-a6fe-1a3ca1aedfc2
   FunctionListBooks:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1369,6 +1395,15 @@ Resources:
           - ":"
           - !Ref AppApi
           - /*
+    Metadata:
+      "AWS::CloudFormation::Designer":
+        id: 06a821b7-638e-471c-ab50-51710b73767c
+  FunctionAuthorizeStepPermissions:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt FunctionAuthorizeStep.Arn
+      Principal: "*"
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 06a821b7-638e-471c-ab50-51710b73767c
@@ -1840,7 +1875,8 @@ Resources:
     DependsOn: FunctionListOrdersPermissions
     Type: "AWS::ApiGateway::Method"
     Properties:
-      AuthorizationType: AWS_IAM
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref ApiRequestAuthorizer
       HttpMethod: GET
       Integration:
         Type: AWS_PROXY
@@ -1865,6 +1901,7 @@ Resources:
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 9007f88f-407a-4ab7-9ebb-ce6fa13b223e
+
   OrdersApiRequestPOST:
     DependsOn: FunctionCheckoutPermissions
     Type: "AWS::ApiGateway::Method"
@@ -2346,6 +2383,18 @@ Resources:
           - Arn
       RestApiId: !Ref AppApi
       Type: COGNITO_USER_POOLS
+    Metadata:
+      "AWS::CloudFormation::Designer":
+        id: 03db03b0-3367-4eb8-bfa1-82df7efc4df4
+  ApiRequestAuthorizer:
+    Type: "AWS::ApiGateway::Authorizer"
+    Properties:
+      AuthorizerResultTtlInSeconds: 0
+      IdentitySource: "method.request.header.Authorization"
+      Name: "RequestBasedAuthorizer"
+      RestApiId: !Ref AppApi
+      Type: "REQUEST"
+      AuthorizerUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionAuthorizeStep.Arn}/invocations"
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 03db03b0-3367-4eb8-bfa1-82df7efc4df4
