@@ -2052,7 +2052,8 @@ Resources:
     DependsOn: FunctionRemoveFromCartPermissions
     Type: "AWS::ApiGateway::Method"
     Properties:
-      AuthorizationType: AWS_IAM
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref ApiRequestAuthorizer
       HttpMethod: DELETE
       Integration:
         Type: AWS_PROXY
