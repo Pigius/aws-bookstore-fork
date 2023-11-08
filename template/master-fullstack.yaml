@@ -13,15 +13,19 @@ Mappings:
     us-east-1:
       Bucket: aws-bookstore-demo-app-us-east-1
       NeptuneDataBucket: bookstore-neptune
+      AuthorizeFunctionBucket: avp-authorize-function
     us-west-2:
       Bucket: aws-bookstore-demo-app-us-west-2
       NeptuneDataBucket: bookstore-neptune-us-west-2
+      AuthorizeFunctionBucket: avp-authorize-function
     eu-central-1:
       Bucket: aws-bookstore-demo-app-eu-central-1
       NeptuneDataBucket: bookstore-neptune-eu-central-1
+      AuthorizeFunctionBucket: avp-authorize-function
     eu-west-1:
       Bucket: aws-bookstore-demo-app-eu-west-1
       NeptuneDataBucket: bookstore-neptune-eu-west-1
+      AuthorizeFunctionBucket: avp-authorize-function
   Constants:
     AppKeys:
       SeedRepository: https://s3.amazonaws.com/aws-bookstore-demo/bookstore-webapp.zip
@@ -51,7 +55,7 @@ Mappings:
       PythonLambdaLayer: functions/PythonLambdaLayer.zip
       DeleteBucketsCode: functions/DeleteBuckets.zip
       SeederFunctionCode: functions/aws-serverless-codecommit-seeder.zip
-      AuthorizeStepCode: functions/AuthorizeStep.zip
+      AuthorizeStepCode: authorizeStep.zip
 
 Resources:
   # ---------- VPC - SUBNET - SECURITY GROUPS  ---------
@@ -995,16 +999,14 @@ Resources:
       Handler: index.handler
       MemorySize: 256
       Runtime: nodejs16.x
+      Role: !GetAtt
+        - DynamoDbRole
+        - Arn
       Timeout: 120
       Code:
-        S3Bucket: !FindInMap
-          - S3Buckets
-          - !Ref "AWS::Region"
-          - Bucket
-        S3Key: !FindInMap
-          - Constants
-          - S3Keys
-          - AuthorizeStepCode
+        S3Bucket:
+          !FindInMap [S3Buckets, !Ref "AWS::Region", AuthorizeFunctionBucket]
+        S3Key: !FindInMap [Constants, S3Keys, AuthorizeStepCode]
     Metadata:
       "AWS::CloudFormation::Designer":
         id: 1ae22cac-5803-4077-a6fe-1a3ca1aedfc2
